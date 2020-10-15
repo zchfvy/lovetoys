@@ -33,13 +33,16 @@ function System:addEntity(entity, category)
     -- If there are multiple requirement lists, the added entities will
     -- be added to their respective list.
     if category then
-        self.targets[category][entity.id] = entity
-    else
+        local category = self.targets[category]
+        if category[entity.id] == nil then
+            self.targets[category][entity.id] = entity
+            self:onAddEntity(entity, category)
+        end
+    elseif self.targets[entity.id] == nil then
         -- Otherwise they'll be added to the normal self.targets list
         self.targets[entity.id] = entity
+        self:onAddEntity(entity, category)
     end
-
-    self:onAddEntity(entity, category)
 end
 
 function System:removeEntity(entity, group)
